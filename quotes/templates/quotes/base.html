@@ -1,0 +1,36 @@
+<!-- 
+File: base.html
+Author: Alicia (beans@bu.edu), 9/11/2025
+Description: The base template for the Borat Quote of the Day application.
+Provides common HTML structure and navigation for all pages.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Borat Quote of the Day{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'quotes/style.css' %}">
+</head>
+<body>
+    <!-- Header section with navigation menu -->
+    <header>
+        <nav>
+            <!-- Navigation links for main pages -->
+            <ul>
+                <li><a href="{% url 'quote' %}">Home</a></li>
+                <li><a href="{% url 'show_all' %}">All Quotes</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Main content area - filled by child templates -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

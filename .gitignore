@@ -1,0 +1,30 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Django files
+.env
+.env.*
+*/migrations/__pycache__/
+*/migrations/*.pyc
+db.sqlite3-journal
+/static/admin/
+
+# Cache and log files
+*.log
+*.cache
+*.coverage
+
+# Editor files
+.vscode/
+.DS_Store
+
+# Pipenv
+.python-version
