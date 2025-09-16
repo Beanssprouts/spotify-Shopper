@@ -11,12 +11,12 @@ urlpatterns = [
     # Root URL, displays random quote
     path('', views.quote, name='quote'),
     
-    # Quote URL - displays random quote
+    # Quote URL, displays random quote
     path('quote/', views.quote, name='quote'),
     
-    # Show all URL - displays all quotes and images
+    # Show all URL, displays all quotes and images
     path('show_all/', views.show_all, name='show_all'),
     
-    # About URL - displays about page
+    # About URL, displays about page
     path('about/', views.about, name='about'),
 ]
