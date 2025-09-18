@@ -1,0 +1,34 @@
+<!-- 
+File: base.html
+Author: Alicia (beans@bu.edu), 9/11/2025
+Description: The base template for the restaurant
+Provides common HTML structure and navigation for all pages.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The Usual Place{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'restaurant/style.css' %}">
+</head>
+<body>
+    <!-- Header section with navigation menu -->
+    <header>
+        <nav>
+            <!-- Navigation links for main pages -->
+            <ul>
+                <li><a href="{% url 'main' %}">main</a></li>
+                <li><a href="{% url 'order' %}">order</a></li>
+        </nav>
+    </header>
+    
+    <!-- Main content area - filled by child templates -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

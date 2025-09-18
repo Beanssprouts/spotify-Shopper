@@ -1,0 +1,79 @@
+<!--
+File: order.html
+Author: Alicia (beans@bu.edu), 9/18/2025
+Description: Order form page for The Usual Place restaurant
+-->
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Order - The Usual Place{% endblock %}
+
+{% block content %}
+<div class="order-container">
+    <h1>Place Your Order</h1>
+    <p>We already know what you want, but please confirm below.</p>
+    
+    <form method="POST" action="{% url 'confirmation' %}">
+        {% csrf_token %}
+        
+        <!-- Regular Menu Items -->
+        <h2>Menu</h2>
+        <div class="menu-section">
+            {% for item in entrees %}
+            <div class="menu-item {% if item.disabled %}disabled{% endif %}">
+                <input type="checkbox" name="items" value="{{ item.name }}" id="{{ item.name }}" {% if item.disabled %}disabled{% endif %}>
+                <label for="{{ item.name }}">
+                    {{ item.name }} - ${{ item.price }}
+                    {% if item.description %}
+                        <span class="description">{{ item.description }}</span>
+                    {% endif %}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Daily Special -->
+        <h2>Today's Special</h2>
+        <div class="special-section">
+            <div class="menu-item special">
+                <input type="checkbox" name="items" value="{{ specials.name }}" id="special">
+                <label for="special">
+                    {{ specials.name }} - ${{ specials.price }}
+                    {% if specials.Description %}
+                        <span class="description">{{ specials.Description }}</span>
+                    {% endif %}
+                </label>
+            </div>
+        </div>
+        
+        <!-- Customer Information -->
+        <h2>Customer Information</h2>
+        <div class="customer-info">
+            <div class="form-group">
+                <label for="customerName">Name:</label>
+                <input type="text" name="customerName" id="customerName">
+            </div>
+            
+            <div class="form-group">
+                <label for="customerPhone">Phone:</label>
+                <input type="tel" name="customerPhone" id="customerPhone">
+            </div>
+            
+            <div class="form-group">
+                <label for="customerEmail">Email:</label>
+                <input type="email" name="customerEmail" id="customerEmail">
+            </div>
+        </div>
+        
+        <!-- Special Instructions -->
+        <h2>Special Instructions</h2>
+        <div class="instructions-section">
+            <textarea name="specialInstructions" id="specialInstructions" rows="4"></textarea>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="submit-section">
+            <button type="submit" class="order-btn">Place Order</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
