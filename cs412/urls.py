@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('quotes.urls')),       
     path('restaurant/', include('restaurant.urls')), 
+    path('aliciaLin/', include('aliciaLin.urls')),  # Add this line
 ]
-

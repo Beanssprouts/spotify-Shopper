@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'quotes',
-    'restaurant'
+    'restaurant',
+    'aliciaLin',
 ]
 
 MIDDLEWARE = [
@@ -136,8 +137,8 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = "media/"
 
-CS_DEPLOYMENT_HOSTNAME = 'cs-webapps.bu.edu'
+CS_DEPLOYMENT_HOSTNAME = 'csa2.bu.edu'
 
 if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
-    STATIC_URL = '/beans/static/'  # Replace with your BU username
-    MEDIA_URL = '/beans/media/'    # Replace with your BU username
+    STATIC_URL = '/beans/static/'  
+    MEDIA_URL = '/beans/media/'    

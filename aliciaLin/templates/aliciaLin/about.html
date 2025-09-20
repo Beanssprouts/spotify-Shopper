@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Alicia Lin</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'aliciaLin/style.css' %}">
+</head>
+<body>
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Alicia Lin</div>
+            <ul class="nav-links">
+                <li><a href="{% url 'quote' %}">Home</a></li>
+                <li><a href="{% url 'show_all' %}">All Quotes</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section about visible" style="padding-top: 120px;">
+        <div class="section-content">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Alicia Lin</h2>
+                    <p>Alicia Lin is a visionary leader known for her innovative thinking and motivational insights. She has inspired countless individuals through her speeches and writings.</p>
+                    <p>With over 15 years of experience in leadership and innovation, Alicia continues to push boundaries and inspire positive change in organizations worldwide.</p>
+                    <p>This website was created by [Your Name] for CS412.</p>
+                </div>
+                <div class="about-image">
+                    <span>Profile Image</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
