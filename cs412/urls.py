@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),  # Add this
     path('spotify/', include('spotifyShopper.urls')),
 ]
