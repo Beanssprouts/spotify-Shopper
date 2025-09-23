@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views   # if you use spotify_callback here
+from spotifyShopper import views as shopper_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('callback/', views.spotify_callback, name='spotify_callback'),
-    path('', include('spotifyShopper.urls')),   # 👈 root instead of "spotify/"
+    path('callback/', shopper_views.spotify_callback, name='spotify_callback'),
+    path('', include('spotifyShopper.urls')),  # 👈 mount app at root
 ]
 
 
