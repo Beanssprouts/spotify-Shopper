@@ -145,7 +145,8 @@ if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
 """Spotify API credentials"""
 SPOTIFY_CLIENT_ID = 'f8d1e89053854b0d95df3adedf88fbc6'  # Replace with your actual Client ID
 SPOTIFY_CLIENT_SECRET = '9c073dffee574f6bb10ff5211d24c887'  # Replace with your actual Client Secret
-SPOTIFY_REDIRECT_URI = 'https://example.com'
+ALLOWED_HOSTS = ['spotify-shopper.onrender.com', 'localhost', '127.0.0.1']
+SPOTIFY_REDIRECT_URI = 'https://spotify-shopper.onrender.com'
 
 """Session settings for cart"""
 SESSION_COOKIE_AGE = 86400  # 24 hours
