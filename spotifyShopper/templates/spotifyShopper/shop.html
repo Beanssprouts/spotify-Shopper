@@ -1,0 +1,59 @@
+{% extends 'spotifyShopper/base.html' %}
+
+{% block title %}Browse Playlists - SpotifyShopper{% endblock %}
+
+{% block content %}
+<div style="color: white; margin-bottom: 2rem;">
+    <h1>🎵 Featured Playlists</h1>
+    <p>Discover amazing playlists and add them to your cart!</p>
+</div>
+
+{% if playlists %}
+    <div class="grid">
+        {% for playlist in playlists %}
+            <div class="card">
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    {% if playlist.image_url %}
+                        <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" 
+                             style="width: 80px; height: 80px; border-radius: 5px; object-fit: cover;">
+                    {% else %}
+                        <div style="width: 80px; height: 80px; background: #1db954; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            🎵
+                        </div>
+                    {% endif %}
+                    
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 0.5rem; color: #333;">{{ playlist.name }}</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            by {{ playlist.owner_name }}
+                        </p>
+                        <p style="color: #888; font-size: 0.8rem; margin-bottom: 1rem;">
+                            {{ playlist.track_count }} tracks
+                        </p>
+                        
+                        {% if playlist.description %}
+                            <p style="color: #555; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.4;">
+                                {{ playlist.description|truncatewords:20 }}
+                            </p>
+                        {% endif %}
+                        
+                        <a href="{% url 'add_to_cart' playlist.spotify_id %}" class="btn" style="font-size: 0.9rem; padding: 8px 16px;">
+                            🛒 Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <h3 style="color: #666; margin-bottom: 1rem;">No playlists found</h3>
+        <p style="color: #888;">
+            Unable to load playlists from Spotify. Please try refreshing the page or check your connection.
+        </p>
+        <a href="{% url 'shop' %}" class="btn" style="margin-top: 1rem;">
+            🔄 Refresh
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

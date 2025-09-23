@@ -14,4 +14,5 @@ urlpatterns = [
     path('main/', views.main, name='main'),
     path('order/', views.order, name='order'),
     path('notaconfirmation/', views.confirmation, name='confirmation'),  # ← Fixed name
+    path('level2/', views.level2, name='level2'),
 ]

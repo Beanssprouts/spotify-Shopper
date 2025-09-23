@@ -11,8 +11,9 @@ Provides common HTML structure and navigation for all pages.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}The Usual Place{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'restaurant/style.css' %}">
+    <style>
+        {% include "restaurant/css/styles.css" %}
+    </style>
 </head>
 <body>
     <!-- Header section with navigation menu -->

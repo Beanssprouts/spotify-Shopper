@@ -1,0 +1,24 @@
+{% extends 'spotifyShopper/base.html' %}
+
+{% block title %}My Playlists - SpotifyShopper{% endblock %}
+
+{% block content %}
+<div style="color: white; margin-bottom: 2rem;">
+    <h1>🎵 My Followed Playlists</h1>
+    <p>Playlists you've purchased through SpotifyShopper</p>
+</div>
+
+{% if user_playlists %}
+    <div class="grid">
+        {% for user_playlist in user_playlists %}
+            {% with playlist=user_playlist.playlist %}
+                <div class="card">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        {% if playlist.image_url %}
+                            <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" 
+                                 style="width: 80px; height: 80px; border-radius: 5px; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 80px; height: 80px; background: #1db954; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                🎵
+                            </div>
+                        {% endif %}

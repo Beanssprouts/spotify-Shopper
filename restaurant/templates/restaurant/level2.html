@@ -7,7 +7,7 @@ menu of the restaurant page
 
 {% extends 'restaurant/base.html' %}
 
-{% block title %}The Usual Place{% endblock %}
+{% block title %}Eye of the Beholder{% endblock %}
 
 {% block content %}
 
@@ -15,32 +15,14 @@ menu of the restaurant page
 <div class="main-container">
     <!-- Page Title -->
     <h1>Welcome to The Usual Place!</h1>
-
     <!-- image of the restaurant (oOOoooOo super creepy oOOoOo)-->
-    <div class="restaurant-image" style="position: relative;">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6e5Nst67dlvLVibosC99m7EGUfA8l4eVUUg&s" alt="The Usual Place Restaurant" class="main-image">
-        <button id="hidden-button" style="
-            position: absolute;
-            top: 43%;
-            left: 51%;
-            transform: translate(-50%, -50%);
-            width: 9px;
-            height: 9px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            opacity: 1;
-        "></button>
-    </div>
+<div class="restaurant-image" style="position: relative;">
+    <img src="https://everbreed.com/wp-content/uploads/2024/10/Everbreed-2024-10-24T211406.531-1024x577.jpg" alt="The Usual Place Restaurant" class="main-image">
+</div>
     
     <!-- Restaurant description -->
     <div class="restaurant-info">
-        <h2>Where Everyone Knows (who) You're Order</h2>
-        <p>Welcome to The Usual Place, where we've been serving the community since... well, since you started coming here. 
-           You know how it is, some places just feel like home, even if you don't remember your first visit.</p>
-        
-        <p>Our friendly staff have been expecting you. 
-           They always know exactly what you want.</p>
+        <h2>youre so pretty</h2>
 
         <h3>Hours of Operation</h3>
         <ul class="hours-list">
@@ -58,11 +40,10 @@ menu of the restaurant page
         </div>
     </div>
 </div>
-
 <script>
 document.getElementById('hidden-button').addEventListener('click', function() {
-    window.location.href = "{% url 'level2' %}";
+    // Add whatever you want to happen when the button is clicked
+    console.log('Hidden button clicked!');
 });
 </script>
-
 {% endblock %}

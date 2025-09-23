@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'quotes',
     'restaurant',
     'aliciaLin',
+    'spotifyShopper',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +143,12 @@ CS_DEPLOYMENT_HOSTNAME = 'csa2.bu.edu'
 if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
     STATIC_URL = '/beans/static/'  
     MEDIA_URL = '/beans/media/'    
+
+"""Spotify API credentials"""
+SPOTIFY_CLIENT_ID = 'f8d1e89053854b0d95df3adedf88fbc6'  # Replace with your actual Client ID
+SPOTIFY_CLIENT_SECRET = '9c073dffee574f6bb10ff5211d24c887'  # Replace with your actual Client Secret
+SPOTIFY_REDIRECT_URI = 'https://example.com'
+
+"""Session settings for cart"""
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_SAVE_EVERY_REQUEST = True

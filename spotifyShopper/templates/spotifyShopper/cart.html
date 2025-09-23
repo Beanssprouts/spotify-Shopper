@@ -1,0 +1,80 @@
+{% extends 'spotifyShopper/base.html' %}
+
+{% block title %}Your Cart - SpotifyShopper{% endblock %}
+
+{% block content %}
+<div style="color: white; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1>🛒 Your Cart</h1>
+        <p>{{ cart_count }} playlist{{ cart_count|pluralize }} in your cart</p>
+    </div>
+    
+    {% if playlists %}
+        <form method="post" action="{% url 'purchase_cart' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="font-size: 1.1rem; padding: 12px 24px;">
+                ✨ Follow All Playlists
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+{% if playlists %}
+    <div class="grid">
+        {% for playlist in playlists %}
+            <div class="card">
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    {% if playlist.image_url %}
+                        <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" 
+                             style="width: 80px; height: 80px; border-radius: 5px; object-fit: cover;">
+                    {% else %}
+                        <div style="width: 80px; height: 80px; background: #1db954; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            🎵
+                        </div>
+                    {% endif %}
+                    
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 0.5rem; color: #333;">{{ playlist.name }}</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            by {{ playlist.owner_name }}
+                        </p>
+                        <p style="color: #888; font-size: 0.8rem; margin-bottom: 1rem;">
+                            {{ playlist.track_count }} tracks
+                        </p>
+                        
+                        {% if playlist.description %}
+                            <p style="color: #555; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.4;">
+                                {{ playlist.description|truncatewords:15 }}
+                            </p>
+                        {% endif %}
+                        
+                        <a href="{% url 'remove_from_cart' playlist.spotify_id %}" 
+                           class="btn btn-danger" style="font-size: 0.9rem; padding: 8px 16px;">
+                            ❌ Remove
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div style="text-align: center; margin-top: 2rem;">
+        <form method="post" action="{% url 'purchase_cart' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="font-size: 1.2rem; padding: 15px 30px;">
+                ✨ Follow All {{ cart_count }} Playlist{{ cart_count|pluralize }}
+            </button>
+        </form>
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <h3 style="color: #666; margin-bottom: 1rem;">Your cart is empty</h3>
+        <p style="color: #888; margin-bottom: 2rem;">
+            Browse our featured playlists and add some to your cart!
+        </p>
+        <a href="{% url 'shop' %}" class="btn">
+            🔍 Browse Playlists
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

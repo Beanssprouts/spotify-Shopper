@@ -3,7 +3,6 @@ import random
 import datetime
 import math
 
-
 """The Daily Specials that are being rotated amongst"""
 dailySpecials = [
         {'name': 'Meatloaf', 'price': 8.99}, 
@@ -12,7 +11,6 @@ dailySpecials = [
         {'name': 'Todays Fresh Catch', 'price': 14.44, 'description': '(caught in the office building)' },
         {'name': 'Your Usual', 'price': 14.99, 'description': '(you dont have a usual)'}
     ]
-
 
 def main(request): 
     """displays the Main Page with an image and a description of the pizzeria"""
@@ -42,7 +40,6 @@ def order(request):
         {'name': 'The Exit', 'price': 0.00, 'description': '(SOLD OUT)','disabled': True},
         {'name': 'The Exit', 'price': 0.00, 'description': '(SOLD OUT)','disabled': True},
         {'name': 'The Way Back', 'price': '∞∞.∞∞', 'description': '(payment plans available)'},
-
     ]
 
     selectedSpecials = random.choice(dailySpecials)
@@ -52,8 +49,6 @@ def order(request):
         'specials': selectedSpecials,
     }
     return render(request, 'restaurant/order.html', context)
-
-
 
 def confirmation(request): 
     """displays after the order has been submitted"""
@@ -89,7 +84,6 @@ def confirmation(request):
         if i in allItems: 
             totalPrice += allItems[i]
 
-
     readyTimes = ["∞ minutes", "25:99 PM", "When you stop looking", "Soon™"]
     readyTime = random.choice(readyTimes)
 
@@ -102,7 +96,9 @@ def confirmation(request):
         'totalPrice': totalPrice,
         'readyTime': readyTime,
     }
-
-
+    
     return render(request, 'restaurant/notaconfirmation.html', context)
 
+def level2(request):
+    """Secret level 2 page"""
+    return render(request, 'restaurant/level2.html')
