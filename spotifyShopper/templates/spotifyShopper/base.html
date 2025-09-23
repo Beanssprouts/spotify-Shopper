@@ -164,7 +164,6 @@
                     <li><a href="{% url 'shop' %}">Browse</a></li>
                     <li><a href="{% url 'cart' %}">Cart {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}</a></li>
                     <li><a href="{% url 'my_playlists' %}">My Playlists</a></li>
-                    <li><a href="{% url 'spotify_logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'spotify_home' %}">Home</a></li>
                 {% endif %}
