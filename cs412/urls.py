@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from spotifyShopper import views as spotify_views
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to Spotify Shopper!")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('spotify/', include('spotifyShopper.urls')),
-    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),
+    path('spotify/', include('spotifyShopper.urls')),  # guessing your app
+    path('', home, name='home'),  # 👈 new root URL
 ]
