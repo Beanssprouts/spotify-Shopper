@@ -20,6 +20,6 @@ from spotifyShopper import views as spotify_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),
     path('spotify/', include('spotifyShopper.urls')),
+    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),
 ]
