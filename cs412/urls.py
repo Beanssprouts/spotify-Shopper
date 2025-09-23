@@ -23,6 +23,8 @@ def home(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('spotify/', include('spotifyShopper.urls')),  # guessing your app
-    path('', home, name='home'),  # 👈 new root URL
+    path('callback/', views.spotify_callback, name='spotify_callback'),
+    path('', include('spotifyShopper.urls')),
 ]
+
+
