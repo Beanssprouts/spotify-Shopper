@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from spotifyShopper import views as spotify_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),  # Add this
+    path('callback/', spotify_views.spotify_callback, name='spotify_callback'),
     path('spotify/', include('spotifyShopper.urls')),
 ]
