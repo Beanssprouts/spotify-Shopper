@@ -183,8 +183,8 @@ def get_featured_playlists(spotify_user):
     headers = {'Authorization': f'Bearer {spotify_user.spotify_token}'}
     print(f"Using token: {spotify_user.spotify_token[:20]}...", file=sys.stderr, flush=True)
     
-    # Try user's own playlists first - more reliable than featured playlists
-    url = 'https://api.spotify.com/v1/me/playlists?limit=20'
+    # Try featured playlists first - this is what we want for discovery
+    url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20&market=US'
     print(f"Making request to: {url}", file=sys.stderr, flush=True)
     
     response = requests.get(url, headers=headers)
@@ -192,15 +192,21 @@ def get_featured_playlists(spotify_user):
     print(f"Spotify API response: {response.text[:200]}...", file=sys.stderr, flush=True)
 
     if response.status_code != 200:
-        print(f"User playlists failed, trying featured playlists...", file=sys.stderr, flush=True)
-        # Fallback to featured playlists
+        print(f"Featured playlists failed, trying without market parameter...", file=sys.stderr, flush=True)
+        # Try without market parameter
         url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20'
         response = requests.get(url, headers=headers)
-        print(f"Featured playlists response status: {response.status_code}", file=sys.stderr, flush=True)
+        print(f"No market response status: {response.status_code}", file=sys.stderr, flush=True)
         
         if response.status_code != 200:
-            print(f"Both endpoints failed: {response.status_code} - {response.text}", file=sys.stderr, flush=True)
-            return []
+            print(f"Featured playlists still failing, trying browse categories...", file=sys.stderr, flush=True)
+            # Try browse categories as last resort
+            url = 'https://api.spotify.com/v1/browse/categories?limit=5&market=US'
+            response = requests.get(url, headers=headers)
+            print(f"Categories response: {response.status_code}", file=sys.stderr, flush=True)
+            if response.status_code != 200:
+                print(f"All endpoints failed: {response.status_code} - {response.text}", file=sys.stderr, flush=True)
+                return []
 
     try:
         data = response.json()
