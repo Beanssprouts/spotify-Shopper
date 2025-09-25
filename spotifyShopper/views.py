@@ -36,24 +36,42 @@ def spotify_login(request):
 
 
 def spotify_callback(request):
-    """Handle Spotify OAuth callback"""
+    """Handle Spotify OAuth callback with better debugging"""
     code = request.GET.get('code')
+    error = request.GET.get('error')
+    
+    print(f"Callback received - Code: {bool(code)}, Error: {error}")
+    
+    if error:
+        print(f"Spotify OAuth error: {error}")
+        messages.error(request, f'Spotify authorization failed: {error}')
+        return redirect('spotify_home')
+    
     if not code:
-        messages.error(request, 'Spotify authorization failed')
+        print("No authorization code received")
+        messages.error(request, 'No authorization code received')
         return redirect('spotify_home')
 
     # Exchange code for token
     token_url = 'https://accounts.spotify.com/api/token'
-    response = requests.post(token_url, data={
+    token_data = {
         'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
         'client_id': settings.SPOTIFY_CLIENT_ID,
         'client_secret': settings.SPOTIFY_CLIENT_SECRET,
-    })
-
+    }
+    
+    print(f"Token request data: {token_data}")
+    
+    response = requests.post(token_url, data=token_data)
+    
+    print(f"Token response status: {response.status_code}")
+    print(f"Token response: {response.text}")
+    
     if response.status_code != 200:
-        messages.error(request, 'Failed to get Spotify token')
+        print(f"Token exchange failed: {response.text}")
+        messages.error(request, f'Failed to get Spotify token: {response.text}')
         return redirect('spotify_home')
 
     data = response.json()
@@ -61,18 +79,32 @@ def spotify_callback(request):
     refresh_token = data.get('refresh_token')
     expires_in = data.get('expires_in')
 
+    if not access_token:
+        print("No access token in response")
+        messages.error(request, 'No access token received')
+        return redirect('spotify_home')
+
     # Get user profile
+    profile_headers = {'Authorization': f'Bearer {access_token}'}
+    print(f"Profile request headers: {profile_headers}")
+    
     profile_response = requests.get(
         'https://api.spotify.com/v1/me',
-        headers={'Authorization': f'Bearer {access_token}'}
+        headers=profile_headers
     )
 
+    print(f"Profile response status: {profile_response.status_code}")
+    print(f"Profile response: {profile_response.text}")
+
     if profile_response.status_code != 200:
-        messages.error(request, 'Failed to get Spotify profile')
+        print(f"Profile request failed: {profile_response.text}")
+        messages.error(request, f'Failed to get Spotify profile: {profile_response.text}')
         return redirect('spotify_home')
 
     profile = profile_response.json()
+    print(f"Profile data: {profile}")
 
+    # Rest of your existing code...
     # Create or get Django user
     django_user, created = User.objects.get_or_create(
         username=profile['id'],
