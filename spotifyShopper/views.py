@@ -168,6 +168,7 @@ def shop(request):
 
 def get_featured_playlists(spotify_user):
     """Fetch playlists from Spotify API with debugging"""
+    import sys
     print(f"=== GET_FEATURED_PLAYLISTS CALLED ===", file=sys.stderr, flush=True)
     print(f"Getting playlists for user: {spotify_user.display_name}", file=sys.stderr, flush=True)
     print(f"Token expiry: {spotify_user.token_expiry}", file=sys.stderr, flush=True)
@@ -182,39 +183,66 @@ def get_featured_playlists(spotify_user):
     headers = {'Authorization': f'Bearer {spotify_user.spotify_token}'}
     print(f"Using token: {spotify_user.spotify_token[:20]}...", file=sys.stderr, flush=True)
     
-    url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20'
+    # Try user's own playlists first - more reliable than featured playlists
+    url = 'https://api.spotify.com/v1/me/playlists?limit=20'
     print(f"Making request to: {url}", file=sys.stderr, flush=True)
     
     response = requests.get(url, headers=headers)
-    
     print(f"Spotify API response status: {response.status_code}", file=sys.stderr, flush=True)
     print(f"Spotify API response: {response.text[:200]}...", file=sys.stderr, flush=True)
 
     if response.status_code != 200:
-        print(f"Spotify API error: {response.status_code} - {response.text}", file=sys.stderr, flush=True)
+        print(f"User playlists failed, trying featured playlists...", file=sys.stderr, flush=True)
+        # Fallback to featured playlists
+        url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20'
+        response = requests.get(url, headers=headers)
+        print(f"Featured playlists response status: {response.status_code}", file=sys.stderr, flush=True)
+        
+        if response.status_code != 200:
+            print(f"Both endpoints failed: {response.status_code} - {response.text}", file=sys.stderr, flush=True)
+            return []
+
+    try:
+        data = response.json()
+        print(f"Response JSON keys: {list(data.keys())}", file=sys.stderr, flush=True)
+        
+        # Handle different response structures
+        if 'items' in data:
+            spotify_playlists = data['items']
+        elif 'playlists' in data and 'items' in data['playlists']:
+            spotify_playlists = data['playlists']['items']
+        else:
+            print(f"Unexpected response structure: {data}", file=sys.stderr, flush=True)
+            return []
+            
+        print(f"Found {len(spotify_playlists)} playlists from API", file=sys.stderr, flush=True)
+        
+    except Exception as e:
+        print(f"Error parsing JSON: {e}", file=sys.stderr, flush=True)
         return []
 
-
-    spotify_playlists = response.json().get('playlists', {}).get('items', [])
-    print(f"Found {len(spotify_playlists)} playlists")
-    
     playlists = []
-
     for sp in spotify_playlists:
-        playlist, created = Playlist.objects.get_or_create(
-            spotify_id=sp['id'],
-            defaults={
-                'name': sp['name'],
-                'description': sp.get('description', ''),
-                'image_url': sp['images'][0]['url'] if sp['images'] else '',
-                'track_count': sp['tracks']['total'],
-                'owner_name': sp['owner']['display_name'],
-                'owner_id': sp['owner']['id']
-            }
-        )
-        playlists.append(playlist)
+        try:
+            playlist, created = Playlist.objects.get_or_create(
+                spotify_id=sp['id'],
+                defaults={
+                    'name': sp['name'],
+                    'description': sp.get('description', ''),
+                    'image_url': sp['images'][0]['url'] if sp.get('images') else '',
+                    'track_count': sp['tracks']['total'],
+                    'owner_name': sp['owner']['display_name'],
+                    'owner_id': sp['owner']['id']
+                }
+            )
+            playlists.append(playlist)
+            if created:
+                print(f"Created new playlist: {playlist.name}", file=sys.stderr, flush=True)
+        except Exception as e:
+            print(f"Error processing playlist {sp.get('name', 'Unknown')}: {e}", file=sys.stderr, flush=True)
+            continue
 
-    print(f"Returning {len(playlists)} playlist objects")
+    print(f"Returning {len(playlists)} playlist objects", file=sys.stderr, flush=True)
     return playlists
 
 
