@@ -168,31 +168,32 @@ def shop(request):
 
 def get_featured_playlists(spotify_user):
     """Fetch playlists from Spotify API with debugging"""
-    print("=== GET_FEATURED_PLAYLISTS CALLED ===")
-    print(f"Getting playlists for user: {spotify_user.display_name}")
-    print(f"Token expiry: {spotify_user.token_expiry}")
-    print(f"Current time: {timezone.now()}")
+    print(f"=== GET_FEATURED_PLAYLISTS CALLED ===", file=sys.stderr, flush=True)
+    print(f"Getting playlists for user: {spotify_user.display_name}", file=sys.stderr, flush=True)
+    print(f"Token expiry: {spotify_user.token_expiry}", file=sys.stderr, flush=True)
+    print(f"Current time: {timezone.now()}", file=sys.stderr, flush=True)
     
     if spotify_user.token_expiry <= timezone.now():
-        print("Token expired, refreshing...")
+        print("Token expired, refreshing...", file=sys.stderr, flush=True)
         refresh_user_token(spotify_user)
     else:
-        print("Token is still valid")
+        print("Token is still valid", file=sys.stderr, flush=True)
 
     headers = {'Authorization': f'Bearer {spotify_user.spotify_token}'}
-    print(f"Using token: {spotify_user.spotify_token[:20]}...")  # Only show first 20 chars
+    print(f"Using token: {spotify_user.spotify_token[:20]}...", file=sys.stderr, flush=True)
     
     url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20'
-    print(f"Making request to: {url}")
+    print(f"Making request to: {url}", file=sys.stderr, flush=True)
     
     response = requests.get(url, headers=headers)
     
-    print(f"Spotify API response status: {response.status_code}")
-    print(f"Spotify API response: {response.text[:500]}...")  # First 500 chars
+    print(f"Spotify API response status: {response.status_code}", file=sys.stderr, flush=True)
+    print(f"Spotify API response: {response.text[:200]}...", file=sys.stderr, flush=True)
 
     if response.status_code != 200:
-        print(f"Spotify API error: {response.status_code} - {response.text}")
+        print(f"Spotify API error: {response.status_code} - {response.text}", file=sys.stderr, flush=True)
         return []
+
 
     spotify_playlists = response.json().get('playlists', {}).get('items', [])
     print(f"Found {len(spotify_playlists)} playlists")
