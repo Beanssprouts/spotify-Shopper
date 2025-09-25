@@ -134,6 +134,10 @@ def spotify_callback(request):
 @login_required
 def shop(request):
     """Browse playlists"""
+    print("=== SHOP VIEW CALLED ===")  # This should appear in logs
+    print(f"User authenticated: {request.user.is_authenticated}")
+    print(f"Username: {request.user.username}")
+    """Browse playlists"""
     try:
         spotify_user = SpotifyUser.objects.get(user=request.user)
     except SpotifyUser.DoesNotExist:
@@ -159,6 +163,7 @@ def shop(request):
 
 def get_featured_playlists(spotify_user):
     """Fetch playlists from Spotify API with debugging"""
+    print("=== GET_FEATURED_PLAYLISTS CALLED ===")
     print(f"Getting playlists for user: {spotify_user.display_name}")
     print(f"Token expiry: {spotify_user.token_expiry}")
     print(f"Current time: {timezone.now()}")
