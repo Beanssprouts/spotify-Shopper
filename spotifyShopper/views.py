@@ -136,11 +136,25 @@ def shop(request):
     """Browse playlists"""
     try:
         spotify_user = SpotifyUser.objects.get(user=request.user)
-        # Force token refresh
-        refresh_user_token(spotify_user)
     except SpotifyUser.DoesNotExist:
         messages.error(request, 'Please connect your Spotify account first')
         return redirect('spotify_home')
+
+    # Get playlists - this might be failing and causing the function to not return anything
+    try:
+        playlists = get_featured_playlists(spotify_user)
+    except Exception as e:
+        print(f"Error getting playlists: {e}")
+        playlists = []
+    
+    cart = request.session.get('cart', [])
+
+    # ALWAYS return an HttpResponse - this was missing before
+    return render(request, 'spotifyShopper/shop.html', {
+        'playlists': playlists,
+        'cart_count': len(cart),
+        'spotify_user': spotify_user
+    })
 
 
 def get_featured_playlists(spotify_user):
