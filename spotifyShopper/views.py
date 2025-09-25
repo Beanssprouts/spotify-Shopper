@@ -136,18 +136,11 @@ def shop(request):
     """Browse playlists"""
     try:
         spotify_user = SpotifyUser.objects.get(user=request.user)
+        # Force token refresh
+        refresh_user_token(spotify_user)
     except SpotifyUser.DoesNotExist:
         messages.error(request, 'Please connect your Spotify account first')
         return redirect('spotify_home')
-
-    playlists = get_featured_playlists(spotify_user)
-    cart = request.session.get('cart', [])
-
-    return render(request, 'spotifyShopper/shop.html', {
-        'playlists': playlists,
-        'cart_count': len(cart),
-        'spotify_user': spotify_user
-    })
 
 
 def get_featured_playlists(spotify_user):
