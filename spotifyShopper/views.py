@@ -151,21 +151,35 @@ def shop(request):
 
 
 def get_featured_playlists(spotify_user):
-    """Fetch playlists from Spotify API"""
+    """Fetch playlists from Spotify API with debugging"""
+    print(f"Getting playlists for user: {spotify_user.display_name}")
+    print(f"Token expiry: {spotify_user.token_expiry}")
+    print(f"Current time: {timezone.now()}")
+    
     if spotify_user.token_expiry <= timezone.now():
+        print("Token expired, refreshing...")
         refresh_user_token(spotify_user)
+    else:
+        print("Token is still valid")
 
     headers = {'Authorization': f'Bearer {spotify_user.spotify_token}'}
-    response = requests.get(
-        'https://api.spotify.com/v1/browse/featured-playlists?limit=20',
-        headers=headers
-    )
+    print(f"Using token: {spotify_user.spotify_token[:20]}...")  # Only show first 20 chars
+    
+    url = 'https://api.spotify.com/v1/browse/featured-playlists?limit=20'
+    print(f"Making request to: {url}")
+    
+    response = requests.get(url, headers=headers)
+    
+    print(f"Spotify API response status: {response.status_code}")
+    print(f"Spotify API response: {response.text[:500]}...")  # First 500 chars
 
     if response.status_code != 200:
-        print(f"Spotify API error: {response.status_code}")
+        print(f"Spotify API error: {response.status_code} - {response.text}")
         return []
 
     spotify_playlists = response.json().get('playlists', {}).get('items', [])
+    print(f"Found {len(spotify_playlists)} playlists")
+    
     playlists = []
 
     for sp in spotify_playlists:
@@ -182,6 +196,7 @@ def get_featured_playlists(spotify_user):
         )
         playlists.append(playlist)
 
+    print(f"Returning {len(playlists)} playlist objects")
     return playlists
 
 
