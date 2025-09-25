@@ -167,67 +167,62 @@ def shop(request):
 
 
 def get_featured_playlists(spotify_user):
-    """Fetch playlists from Spotify API using categories"""
+    """Get playlists using search API (works in development mode)"""
     import sys
-    print(f"=== GET_FEATURED_PLAYLISTS CALLED ===", file=sys.stderr, flush=True)
+    print(f"=== USING SEARCH API FOR PLAYLISTS ===", file=sys.stderr, flush=True)
     
     if spotify_user.token_expiry <= timezone.now():
         refresh_user_token(spotify_user)
 
     headers = {'Authorization': f'Bearer {spotify_user.spotify_token}'}
     
-    # Since featured playlists don't work, get playlists from popular categories
-    categories_url = 'https://api.spotify.com/v1/browse/categories?limit=3&market=US'
-    print(f"Getting categories: {categories_url}", file=sys.stderr, flush=True)
-    
-    categories_response = requests.get(categories_url, headers=headers)
-    print(f"Categories response: {categories_response.status_code}", file=sys.stderr, flush=True)
-    
-    if categories_response.status_code != 200:
-        return []
-    
-    categories_data = categories_response.json()
-    categories = categories_data.get('categories', {}).get('items', [])
-    print(f"Found {len(categories)} categories", file=sys.stderr, flush=True)
-    
+    # Search for popular playlist terms
+    search_terms = ['pop hits', 'rock classics', 'hip hop', 'chill music', 'workout']
     all_playlists = []
     
-    for category in categories[:2]:  # Just use first 2 categories to avoid too many API calls
-        category_id = category['id']
-        category_name = category['name']
-        print(f"Getting playlists for category: {category_name}", file=sys.stderr, flush=True)
+    for term in search_terms[:3]:  # Use first 3 terms
+        search_url = f'https://api.spotify.com/v1/search?q={term}&type=playlist&limit=7'
+        print(f"Searching for: {term}", file=sys.stderr, flush=True)
         
-        # Get playlists for this category
-        playlist_url = f'https://api.spotify.com/v1/browse/categories/{category_id}/playlists?limit=10&market=US'
-        playlist_response = requests.get(playlist_url, headers=headers)
-        print(f"Category {category_name} playlists response: {playlist_response.status_code}", file=sys.stderr, flush=True)
+        response = requests.get(search_url, headers=headers)
+        print(f"Search '{term}' response: {response.status_code}", file=sys.stderr, flush=True)
         
-        if playlist_response.status_code == 200:
-            playlist_data = playlist_response.json()
-            playlists_items = playlist_data.get('playlists', {}).get('items', [])
-            print(f"Found {len(playlists_items)} playlists in {category_name}", file=sys.stderr, flush=True)
-            
-            for sp in playlists_items:
-                try:
-                    playlist, created = Playlist.objects.get_or_create(
-                        spotify_id=sp['id'],
-                        defaults={
-                            'name': sp['name'],
-                            'description': sp.get('description', ''),
-                            'image_url': sp['images'][0]['url'] if sp.get('images') else '',
-                            'track_count': sp['tracks']['total'],
-                            'owner_name': sp['owner']['display_name'],
-                            'owner_id': sp['owner']['id']
-                        }
-                    )
-                    all_playlists.append(playlist)
-                    if created:
-                        print(f"Created playlist: {playlist.name}", file=sys.stderr, flush=True)
-                except Exception as e:
-                    print(f"Error processing playlist: {e}", file=sys.stderr, flush=True)
-                    continue
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                playlists_items = data.get('playlists', {}).get('items', [])
+                print(f"Found {len(playlists_items)} playlists for '{term}'", file=sys.stderr, flush=True)
+                
+                for sp in playlists_items:
+                    try:
+                        # Skip if missing essential data or too short
+                        if not sp.get('id') or not sp.get('name') or sp.get('tracks', {}).get('total', 0) < 5:
+                            continue
+                            
+                        playlist, created = Playlist.objects.get_or_create(
+                            spotify_id=sp['id'],
+                            defaults={
+                                'name': sp['name'],
+                                'description': sp.get('description') or f'Popular {term} playlist',
+                                'image_url': sp['images'][0]['url'] if sp.get('images') else '',
+                                'track_count': sp['tracks']['total'],
+                                'owner_name': sp['owner']['display_name'],
+                                'owner_id': sp['owner']['id']
+                            }
+                        )
+                        all_playlists.append(playlist)
+                        if created:
+                            print(f"Added: {playlist.name} ({playlist.track_count} tracks)", file=sys.stderr, flush=True)
+                            
+                    except Exception as e:
+                        print(f"Error processing playlist: {e}", file=sys.stderr, flush=True)
+                        continue
+                        
+            except Exception as e:
+                print(f"Error parsing search results: {e}", file=sys.stderr, flush=True)
+                continue
         else:
-            print(f"Failed to get playlists for {category_name}: {playlist_response.text[:100]}", file=sys.stderr, flush=True)
+            print(f"Search failed for '{term}': {response.status_code}", file=sys.stderr, flush=True)
 
     print(f"Returning {len(all_playlists)} total playlists", file=sys.stderr, flush=True)
     return all_playlists
