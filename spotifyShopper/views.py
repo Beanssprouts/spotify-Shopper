@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from .models import SpotifyUser, Playlist, UserPlaylist
 import logging
 logger = logging.getLogger(__name__)
+import sys
 
 
 def home(request):
@@ -133,31 +134,31 @@ def spotify_callback(request):
     return redirect('shop')
 
 
+
 @login_required
 def shop(request):
     """Browse playlists"""
-    logger.info("=== SHOP VIEW CALLED ===")
-    logger.info(f"User authenticated: {request.user.is_authenticated}")
-    logger.info(f"Username: {request.user.username}")
+    print("=== SHOP VIEW CALLED ===", file=sys.stderr, flush=True)
+    print(f"User: {request.user.username}", file=sys.stderr, flush=True)
     
     try:
         spotify_user = SpotifyUser.objects.get(user=request.user)
-        logger.info(f"Found Spotify user: {spotify_user.display_name}")
+        print(f"Found Spotify user: {spotify_user.display_name}", file=sys.stderr, flush=True)
+        print(f"Token expires: {spotify_user.token_expiry}", file=sys.stderr, flush=True)
     except SpotifyUser.DoesNotExist:
-        logger.error("SpotifyUser does not exist")
+        print("SpotifyUser does not exist", file=sys.stderr, flush=True)
         messages.error(request, 'Please connect your Spotify account first')
         return redirect('spotify_home')
 
-    # Get playlists - this might be failing and causing the function to not return anything
     try:
+        print("About to call get_featured_playlists", file=sys.stderr, flush=True)
         playlists = get_featured_playlists(spotify_user)
+        print(f"Got {len(playlists)} playlists", file=sys.stderr, flush=True)
     except Exception as e:
-        print(f"Error getting playlists: {e}")
+        print(f"ERROR in get_featured_playlists: {e}", file=sys.stderr, flush=True)
         playlists = []
     
     cart = request.session.get('cart', [])
-
-    # ALWAYS return an HttpResponse - this was missing before
     return render(request, 'spotifyShopper/shop.html', {
         'playlists': playlists,
         'cart_count': len(cart),
