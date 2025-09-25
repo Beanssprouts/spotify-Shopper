@@ -9,6 +9,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import User
 from .models import SpotifyUser, Playlist, UserPlaylist
+import logging
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -134,13 +136,15 @@ def spotify_callback(request):
 @login_required
 def shop(request):
     """Browse playlists"""
-    print("=== SHOP VIEW CALLED ===")  # This should appear in logs
-    print(f"User authenticated: {request.user.is_authenticated}")
-    print(f"Username: {request.user.username}")
-    """Browse playlists"""
+    logger.info("=== SHOP VIEW CALLED ===")
+    logger.info(f"User authenticated: {request.user.is_authenticated}")
+    logger.info(f"Username: {request.user.username}")
+    
     try:
         spotify_user = SpotifyUser.objects.get(user=request.user)
+        logger.info(f"Found Spotify user: {spotify_user.display_name}")
     except SpotifyUser.DoesNotExist:
+        logger.error("SpotifyUser does not exist")
         messages.error(request, 'Please connect your Spotify account first')
         return redirect('spotify_home')
 
