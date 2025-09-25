@@ -22,3 +22,40 @@
                                 🎵
                             </div>
                         {% endif %}
+                        
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.5rem; color: #333;">{{ playlist.name }}</h3>
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                by {{ playlist.owner_name }}
+                            </p>
+                            <p style="color: #888; font-size: 0.8rem; margin-bottom: 1rem;">
+                                {{ playlist.track_count }} tracks
+                            </p>
+                            
+                            {% if playlist.description %}
+                                <p style="color: #555; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.4;">
+                                    {{ playlist.description|truncatewords:15 }}
+                                </p>
+                            {% endif %}
+                            
+                            <p style="color: #888; font-size: 0.8rem;">
+                                Followed on {{ user_playlist.followed_at|date:"M j, Y" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <h3 style="color: #666; margin-bottom: 1rem;">No playlists yet</h3>
+        <p style="color: #888; margin-bottom: 2rem;">
+            You haven't followed any playlists through SpotifyShopper yet.
+        </p>
+        <a href="{% url 'shop' %}" class="btn">
+            🔍 Browse Playlists
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
